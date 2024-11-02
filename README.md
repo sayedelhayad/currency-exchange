@@ -63,7 +63,7 @@ The coverage report will be generated in the target/site/jacoco directory. You c
 
 ## Usage 
 
-1- Use the signup API to register a user.
-2- Use the signin API to login and get authentication token.
-3- Use the authentication token ass a Bearer token while calling the calculate API.
+- 1- Use the signup API to register a user.
+- 2- Use the signin API to login and get authentication token.
+- 3- Use the authentication token ass a Bearer token while calling the calculate API.
 

@@ -23,36 +23,39 @@ and get the payable amount in another currency.
 ---
 ## Installation
 
-# Navigate to the project directory and run:
+Navigate to the project directory and run:
 
 ```bash
 mvn clean install
-
+```
 
 ## Running 
 
-# Navigate to the project directory and run:
+Navigate to the project directory and run:
 
 ```bash
 mvn spring-boot:run
-
+```
 
 ## Testing 
 
-# Execute the tests using the following command:
+Execute the tests using the following command:
 
 ```bash
 mvn clean test
-# To manual test the application, the project initilized by testing data:
+```
+
+To manual test the application, the project initilized by testing data:
 There are two usernames ('emp' and 'cus') and the password is '123'.
 
 
 ## Generate Coverage Report:
 
-# Execute the following command:
+Execute the following command:
 
 ```bash
 mvn jacoco:report
+```
 
 ## View the Coverage Report:
 
@@ -60,7 +63,7 @@ The coverage report will be generated in the target/site/jacoco directory. You c
 
 ## Usage 
 
-# 1- Use the signup API to register a user.
-# 2- Use the signin API to login and get authentication token.
-# 3- Use the authentication token ass a Bearer token while calling the calculate API.
+1- Use the signup API to register a user.
+2- Use the signin API to login and get authentication token.
+3- Use the authentication token ass a Bearer token while calling the calculate API.
 

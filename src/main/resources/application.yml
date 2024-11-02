@@ -1,0 +1,26 @@
+security:
+  jwt:
+    token:
+      secret-key: secretKey
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydb;DB_CLOSE_DELAY=-1
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+ce:
+  exchange-rate:
+    url: https://v6.exchangerate-api.com/v6/eae0fb8042241eee2b51807b/latest/{original-currency}
+  discount:
+    amount: 5
+    percent:
+      employee: 30
+      affiliate: 10
+      tenure: 5
+      tenure-year-threshold: 2
+      excluded-categories: groceries

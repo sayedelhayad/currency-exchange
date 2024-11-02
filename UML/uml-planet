@@ -1,0 +1,74 @@
+@startuml
+
+class BillController {
+    - final CalculatorService calculatorService
+    + ResponseEntity<Double> calculateBill(Bill bill, HttpServletRequest request)
+}
+
+interface CalculatorService {
+    + double calculateBill(Bill bill, final HttpServletRequest request)
+}
+
+class CalculatorServiceImpl implements CalculatorService {
+    - final ExchangeRateClient exchangeRateClient
+    - final Gson gson
+    - final PercentageDiscount percentageDiscount
+    - final Each100AmountDiscount each100AmountDiscount
+    + double calculateBill(final Bill bill, final HttpServletRequest request)
+    - void applyDiscount(final DiscountData discountData)
+}
+
+interface ExchangeRateClient {
+    + ExchangeRateResponse getExchangeRate(String originalCurrency)
+}
+
+class ExchangeRateClientImpl implements ExchangeRateClient {
+    - String url
+    - final Gson gson
+    + ExchangeRateResponse getExchangeRate(final String originalCurrency)
+}
+
+class DiscountData {
+    - Bill bill
+    - double targetEXRate
+    - User user
+}
+
+interface Discount {
+    + double calculate(DiscountData discountData)
+    + void apply(DiscountData discountData)
+}
+
+class PercentageDiscount implements Discount {
+    + double calculate(final DiscountData discountData)
+    - double calculateDiscountableAmount(final DiscountData discountData)
+}
+
+class Each100AmountDiscount implements Discount {
+    + double calculate(final DiscountData discountData)
+}
+
+class Bill {
+    - List<Item> items
+    - double totalAmount
+    - String originalCurrency
+    - String targetCurrency
+}
+
+class Item {
+    - String title
+    - String category
+    - double totalPrice
+}
+
+
+BillController --> CalculatorService : uses >
+CalculatorServiceImpl --> ExchangeRateClient : uses >
+CalculatorServiceImpl --> DiscountData : creates >
+CalculatorServiceImpl --> Bill : works with >
+CalculatorServiceImpl --> Item : works with >
+CalculatorServiceImpl --> Discount : works with >
+PercentageDiscount ..|> Discount
+Each100AmountDiscount ..|> Discount
+
+@enduml

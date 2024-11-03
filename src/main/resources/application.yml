@@ -12,7 +12,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
-
+  cache:
+    type: simple
 ce:
   exchange-rate:
     url: https://v6.exchangerate-api.com/v6/eae0fb8042241eee2b51807b/latest/{original-currency}

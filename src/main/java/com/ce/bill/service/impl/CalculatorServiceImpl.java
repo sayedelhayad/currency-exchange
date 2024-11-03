@@ -30,7 +30,6 @@ public class CalculatorServiceImpl implements CalculatorService {
     @Override
     public double calculateBill(final Bill bill, final HttpServletRequest request) {
 
-
         final ExchangeRateResponse exResponse = exchangeRateClient.getExchangeRate(bill.getOriginalCurrency());
         double targetEXRate = exResponse.getConversion_rates().get(bill.getTargetCurrency());
         double targetTotalAmount = bill.getTotalAmount() * targetEXRate;
@@ -38,7 +37,7 @@ public class CalculatorServiceImpl implements CalculatorService {
 
         String userString = request.getAttribute("user").toString();
         User user = gson.fromJson(userString, User.class);
-        DiscountData discountData = new DiscountData(bill, targetEXRate, user, discountConfig);
+        DiscountData discountData = new DiscountData(bill, bill.getTotalAmount(), targetEXRate, user, discountConfig);
 
         applyDiscounts(discountData);
 

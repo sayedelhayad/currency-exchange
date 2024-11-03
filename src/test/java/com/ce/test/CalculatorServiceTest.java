@@ -34,44 +34,118 @@ public class CalculatorServiceTest {
     @MockBean
     private ExchangeRateClient exchangeRateClient;
 
-    private ExchangeRateResponse exchangeRateResponse;
+    @MockBean
+    private MockHttpServletRequest request;
 
+    private ExchangeRateResponse exchangeRateResponse;
+    private Bill bill;
 
     @BeforeEach
     public void setUp() {
+        request = new MockHttpServletRequest();
         Map<String, Double> conversion_rates = new HashMap<>();
-        conversion_rates.put("AED", 3.67);
+        conversion_rates.put("AED", 2.0);
         exchangeRateResponse = new ExchangeRateResponse();
         exchangeRateResponse.setConversion_rates(conversion_rates);
+
+        bill = new Bill();
+        Item item1 = new Item();
+        item1.setTitle("item1");
+        item1.setCategory("fff");
+        item1.setTotalPrice(250);
+        Item item2 = new Item();
+        item2.setTitle("item2");
+        item2.setCategory("ddd");
+        item2.setTotalPrice(250);
+        List<Item> items = Arrays.asList(item1, item2);
+        bill.setItems(items);
+        bill.setTotalAmount(500);
+        bill.setOriginalCurrency("USD");
+        bill.setTargetCurrency("AED");
+
     }
 
 
     @Test
-    public void calculateTest() throws ParseException {
-        Bill bill = new Bill();
-        Item item1 = new Item();
-        item1.setTitle("item1");
-        item1.setCategory("fff");
-        item1.setTotalPrice(150.5);
-        List<Item> items = Arrays.asList(item1);
-        bill.setItems(items);
-        bill.setTotalAmount(1000);
-        bill.setOriginalCurrency("USD");
-        bill.setTargetCurrency("AED");
+    public void employeeCalculateTest() throws ParseException {
 
-        SimpleDateFormat smp = new SimpleDateFormat("yyyy-MM-dd");
-        Date joiningDate = smp.parse("2020-05-01");
-        User user = User.builder()
+        User employee = User.builder()
                 .type(UserType.EMPLOYEE)
-                .joiningDate(joiningDate)
+                .tenure(2)
                 .build();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("user", gson.toJson(user));
-
+        request.setAttribute("user", gson.toJson(employee));
 
         when(exchangeRateClient.getExchangeRate(any())).thenReturn(exchangeRateResponse);
 
         double result = calculatorService.calculateBill(bill, request);
-        assert(result == 3329.2995);
+        assert(result == 650.0);
+    }
+
+    @Test
+    public void employeeExcludedCategoryCalculateTest() throws ParseException {
+        Item item1 = new Item();
+        item1.setTitle("item1");
+        item1.setCategory("groceries");
+        item1.setTotalPrice(250);
+
+        List<Item> items = Arrays.asList(item1, bill.getItems().get(1));
+        bill.setItems(items);
+
+
+        User employee = User.builder()
+                .type(UserType.EMPLOYEE)
+                .tenure(2)
+                .build();
+        request.setAttribute("user", gson.toJson(employee));
+
+        when(exchangeRateClient.getExchangeRate(any())).thenReturn(exchangeRateResponse);
+
+        double result = calculatorService.calculateBill(bill, request);
+        assert(result == 800.0);
+    }
+
+    @Test
+    public void affiliateCalculateTest() throws ParseException {
+
+        User affiliate = User.builder()
+                .type(UserType.AFFILIATE)
+                .tenure(2)
+                .build();
+        request.setAttribute("user", gson.toJson(affiliate));
+
+        when(exchangeRateClient.getExchangeRate(any())).thenReturn(exchangeRateResponse);
+
+        double result = calculatorService.calculateBill(bill, request);
+        assert(result == 850.0);
+    }
+
+    @Test
+    public void oldCustomerCalculateTest() throws ParseException {
+
+        User customer = User.builder()
+                .type(UserType.CUSTOMER)
+                .tenure(2)
+                .build();
+        request.setAttribute("user", gson.toJson(customer));
+
+        when(exchangeRateClient.getExchangeRate(any())).thenReturn(exchangeRateResponse);
+
+        double result = calculatorService.calculateBill(bill, request);
+        assert(result == 900.0);
+    }
+
+    @Test
+    public void newCustomerCalculateTest() {
+
+        User customer = User.builder()
+                .type(UserType.CUSTOMER)
+                .tenure(1)
+                .build();
+        request.setAttribute("user", gson.toJson(customer));
+
+        when(exchangeRateClient.getExchangeRate(any())).thenReturn(exchangeRateResponse);
+
+        double result = calculatorService.calculateBill(bill, request);
+        assert(result == 950.0);
     }
 }

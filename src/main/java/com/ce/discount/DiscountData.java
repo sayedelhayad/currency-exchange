@@ -11,6 +11,8 @@ public class DiscountData {
 
     private Bill bill;
 
+    private double originalTotalAmount;
+
     private double targetEXRate;
 
     private User user;

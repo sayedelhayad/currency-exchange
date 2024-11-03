@@ -16,7 +16,7 @@ public class Each100AmountDiscount implements Discount {
     public double calculate(final DiscountData discountData) {
 
         DiscountConfig config = discountData.getConfig();
-        int hundreds = (int)discountData.getBill().getTotalAmount() / 100;
+        int hundreds = (int)discountData.getOriginalTotalAmount() / 100;
         return hundreds * config.getAmountDiscount();
     }
 }
